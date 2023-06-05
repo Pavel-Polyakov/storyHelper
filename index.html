@@ -118,6 +118,13 @@
 
                     resultCtx.drawImage(sourceImage, xPosition, yPosition, newWidth, newHeight);
                     resultDiv.appendChild(resultCanvas);
+                    
+                    // Create a download link for the final image
+                    const downloadLink = document.createElement("a");
+                    downloadLink.href = resultCanvas.toDataURL();
+                    downloadLink.download = "final_image.png";
+                    downloadLink.innerHTML = "Download Final Image";
+                    resultDiv.appendChild(downloadLink);
                 };
 
                 sourceImage.src = srcImage;
