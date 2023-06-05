@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Resizer</title>
+    <style>
+        #result-image {
+            width: 1080px;
+            height: 1920px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <input type="file" id="image-input" accept="image/*">
+    <div id="result-image"></div>
+
+    <script>
+        function applyBlur(image, blurRadius) {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            const blurCanvas = document.createElement("canvas");
+            const blurCtx = blurCanvas.getContext("2d");
+
+            const width = image.width;
+            const height = image.height;
+
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(image, 0, 0);
+
+            blurCanvas.width = width;
+            blurCanvas.height = height;
+            blurCtx.filter = `blur(${blurRadius}px)`;
+            blurCtx.drawImage(canvas, 0, 0, width, height);
+
+            return blurCanvas;
+        }
+
+        function resizeImage(srcImage, maxHeight) {
+            return new Promise((resolve, reject) => {
+                const image = new Image();
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                image.onload = () => {
+                    const width = image.width;
+                    const height = image.height;
+
+                    const scaleFactor = maxHeight / height;
+                    const newWidth = width * scaleFactor;
+                    const newHeight = maxHeight;
+
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+                    ctx.drawImage(image, 0, 0, newWidth, newHeight);
+
+                    resolve(canvas.toDataURL());
+                };
+
+                image.onerror = reject;
+                image.src = srcImage;
+            });
+        }
+
+        function createResultImage(srcImage) {
+            const resultDiv = document.getElementById("result-image");
+
+            const resultCanvas = document.createElement("canvas");
+            const resultCtx = resultCanvas.getContext("2d");
+
+            resultCanvas.width = 1080;
+            resultCanvas.height = 1920;
+
+                const image = new Image();
+            image.onload = () => {
+                const { width, height } = image;
+
+                const xOffset = (width - 1080) / 2;
+                const yOffset = (height - 1920) / 2;
+
+                const blurredImage = applyBlur(image, 15);
+                resultCtx.drawImage(blurredImage, xOffset, yOffset, 1080, 1920, 0, 0, 1080, 1920);
+
+                // Decrease brightness
+                resultCtx.globalCompositeOperation = "color-burn";
+                resultCtx.fillStyle = "rgba(0, 0, 0, 0.2)";
+                resultCtx.fillRect(0, 0, 1080, 1920);
+                resultCtx.globalCompositeOperation = "source-over";
+
+                // Add vignette
+                const gradient = resultCtx.createRadialGradient(540, 960, 0, 540, 960, 1000);
+                gradient.addColorStop(0, "rgba(0, 0, 0, 0)");
+                gradient.addColorStop(1, "rgba(0, 0, 0, 0.4)");
+                resultCtx.fillStyle = gradient;
+                resultCtx.fillRect(0, 0, 1080, 1920);
+
+
+                const sourceImage = new Image();
+                sourceImage.onload = () => {
+                    const maxWidth = 1000;
+                    const scaleFactor = maxWidth / sourceImage.width;
+                    const newWidth = maxWidth;
+                    const newHeight = sourceImage.height * scaleFactor;
+
+                    const xPosition = (1080 - newWidth) / 2;
+                    const yPosition = (1920 - newHeight) / 2;
+
+                    const borderWidth = 1;
+                    const borderColor = "rgba(0, 0, 0, 1)";
+                    const shadowColor = "rgba(0, 0, 0, 1)";
+                    const shadowBlur = 50;
+
+                    resultCtx.shadowColor = shadowColor;
+                    resultCtx.shadowBlur = shadowBlur;
+                    resultCtx.strokeStyle = borderColor;
+                    resultCtx.lineWidth = borderWidth;
+                    resultCtx.strokeRect(xPosition, yPosition, newWidth, newHeight);
+
+                    resultCtx.drawImage(sourceImage, xPosition, yPosition, newWidth, newHeight);
+                    resultDiv.appendChild(resultCanvas);
+                };
+
+                sourceImage.src = srcImage;
+            };
+
+            image.src = srcImage;
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = async (readerEvent) => {
+                const resizedImage = await resizeImage(readerEvent.target.result, 1920);
+                createResultImage(resizedImage);
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        const imageInput = document.getElementById("image-input");
+        imageInput.addEventListener("change", handleImageUpload);
+    </script>
+</body>
+</html>
