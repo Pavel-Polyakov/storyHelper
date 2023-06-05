@@ -121,7 +121,7 @@
                     resultCtx.strokeRect(xPosition, yPosition, newWidth, newHeight);
 
                     resultCtx.drawImage(sourceImage, xPosition, yPosition, newWidth, newHeight);
-                    resultDiv.appendChild(resultCanvas);
+                    resultCtx.strokeRect(xPosition, yPosition, newWidth, newHeight);
                     
                     // Create a download link for the final image
                     const downloadLink = document.createElement("a");
