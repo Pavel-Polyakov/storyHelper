@@ -67,7 +67,7 @@
             });
         }
 
-        function createResultImage(srcImage) {
+        function createResultImage(srcImage, fileName) {
             const resultDiv = document.getElementById("result-image");
 
             const resultCanvas = document.createElement("canvas");
@@ -122,15 +122,18 @@
                     resultCtx.drawImage(sourceImage, xPosition, yPosition, newWidth, newHeight);
                     resultCtx.strokeRect(xPosition, yPosition, newWidth, newHeight);
 
-                    resultDiv.appendChild(resultCanvas);
+<!--show the image-->
+<!--                    resultDiv.appendChild(resultCanvas);-->
 
                     // Create a download link for the final image
                     const downloadLink = document.createElement("a");
-                    const resultFileName = `storyHelper_${sourceFileName}`;
-                    downloadLink.href = resultCanvas.toDataURL();
+                    const resultFileName = fileName.replace(/\.[^/.]+$/, "") + "-storyHelper.jpg";
+                    downloadLink.href = resultCanvas.toDataURL("image/jpeg");
                     downloadLink.download = resultFileName;
-                    downloadLink.innerHTML = "Download Final Image";
-                    resultDiv.appendChild(downloadLink);
+                    downloadLink.click();
+
+<!--                    downloadLink.innerHTML = "Download Final Image";-->
+<!--                    resultDiv.appendChild(downloadLink);-->
                 };
 
                 sourceImage.src = srcImage;
@@ -141,11 +144,13 @@
 
         function handleImageUpload(event) {
             const file = event.target.files[0];
+            const fileName = file.name;
+
             const reader = new FileReader();
 
             reader.onload = async (readerEvent) => {
                 const resizedImage = await resizeImage(readerEvent.target.result, 1920);
-                createResultImage(resizedImage);
+                createResultImage(resizedImage, fileName);
             };
 
             if (file) {
