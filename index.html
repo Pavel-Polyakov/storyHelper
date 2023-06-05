@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Image Resizer</title>
+    <title>Story Helper</title>
     <style>
         #result-image {
             width: 1080px;
@@ -9,12 +9,13 @@
             margin: auto;
         }
     </style>
-    
+
     <!--    https://github.com/davidenke/context-filter-polyfill    -->
     <script src="https://cdn.jsdelivr.net/npm/context-filter-polyfill/dist/index.min.js"></script>
 
 </head>
 <body>
+
     <input type="file" id="image-input" accept="image/*">
     <div id="result-image"></div>
 
@@ -75,7 +76,7 @@
             resultCanvas.width = 1080;
             resultCanvas.height = 1920;
 
-                const image = new Image();
+            const image = new Image();
             image.onload = () => {
                 const { width, height } = image;
 
@@ -98,7 +99,6 @@
                 resultCtx.fillStyle = gradient;
                 resultCtx.fillRect(0, 0, 1080, 1920);
 
-
                 const sourceImage = new Image();
                 sourceImage.onload = () => {
                     const maxWidth = 1000;
@@ -112,21 +112,23 @@
                     const borderWidth = 1;
                     const borderColor = "rgba(0, 0, 0, 1)";
                     const shadowColor = "rgba(0, 0, 0, 1)";
-                    const shadowBlur = 50;
+                    const shadowBlur = 30;
 
                     resultCtx.shadowColor = shadowColor;
                     resultCtx.shadowBlur = shadowBlur;
                     resultCtx.strokeStyle = borderColor;
                     resultCtx.lineWidth = borderWidth;
-                    resultCtx.strokeRect(xPosition, yPosition, newWidth, newHeight);
 
                     resultCtx.drawImage(sourceImage, xPosition, yPosition, newWidth, newHeight);
                     resultCtx.strokeRect(xPosition, yPosition, newWidth, newHeight);
-                    
+
+                    resultDiv.appendChild(resultCanvas);
+
                     // Create a download link for the final image
                     const downloadLink = document.createElement("a");
+                    const resultFileName = `storyHelper_${sourceFileName}`;
                     downloadLink.href = resultCanvas.toDataURL();
-                    downloadLink.download = "final_image.png";
+                    downloadLink.download = resultFileName;
                     downloadLink.innerHTML = "Download Final Image";
                     resultDiv.appendChild(downloadLink);
                 };
