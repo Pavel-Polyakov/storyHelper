@@ -122,18 +122,17 @@
                     resultCtx.drawImage(sourceImage, xPosition, yPosition, newWidth, newHeight);
                     resultCtx.strokeRect(xPosition, yPosition, newWidth, newHeight);
 
-<!--show the image-->
-<!--                    resultDiv.appendChild(resultCanvas);-->
-
                     // Create a download link for the final image
                     const downloadLink = document.createElement("a");
                     const resultFileName = fileName.replace(/\.[^/.]+$/, "") + "-storyHelper.jpg";
-                    downloadLink.href = resultCanvas.toDataURL("image/jpeg");
+                    const resultImage = resultCanvas.toDataURL("image/jpeg");
+                    downloadLink.href = resultImage;
                     downloadLink.download = resultFileName;
-                    downloadLink.click();
 
-<!--                    downloadLink.innerHTML = "Download Final Image";-->
-<!--                    resultDiv.appendChild(downloadLink);-->
+                    var image = new Image();
+                    image.src = resultImage;
+                    downloadLink.appendChild(image);
+                    resultDiv.appendChild(downloadLink);
                 };
 
                 sourceImage.src = srcImage;
