@@ -160,21 +160,25 @@
                     downloadLink.href = "#";
 
                     downloadLink.onclick = function() {
-                        var file = new File([resultImage], resultFileName, {type: 'image/jpeg'});
-                        var filesArray = [file];
+                        resultCanvas.toBlob(
+                            function(blob){
+                                var files = [new File([blob], resultFileName, {type: 'image/jpeg'})];
 
-                        if(navigator.canShare && navigator.canShare({ files: filesArray })) {
-                          console.log('can share');
-                          navigator.share({
-                            title: resultFileNameTitle,
-                            files: filesArray,
-                          });
-                        }
-                        else {
-                          console.log('cannot share');
-                          downloadLink.download = resultFileName;
-                          downloadLink.href = resultImage;
-                        }
+                                if(navigator.canShare && navigator.canShare({ files: files })) {
+                                  console.log('can share');
+                                  navigator.share({
+                                    title: resultFileNameTitle,
+                                    files: files,
+                                  });
+                                }
+                                else {
+                                  console.log('cannot share');
+                                  downloadLink.download = resultFileName;
+                                  downloadLink.href = resultImage;
+                                }
+                            }
+                        );
+
                     }
 
                     var image = new Image();
