@@ -154,10 +154,28 @@
 
                     // Create a download link for the final image
                     const downloadLink = document.createElement("a");
-                    const resultFileName = fileName.replace(/\.[^/.]+$/, "") + "-storyHelper.jpg";
+                    const resultFileNameTitle = fileName.replace(/\.[^/.]+$/, "") + "-storyHelper";
+                    const resultFileName = resultFileNameTitle + ".jpg";
                     const resultImage = resultCanvas.toDataURL("image/jpeg");
-                    downloadLink.href = resultImage;
-                    downloadLink.download = resultFileName;
+                    downloadLink.href = "#";
+
+                    downloadLink.onclick = function() {
+                        var file = new File([resultImage], resultFileName, {type: 'image/jpeg'});
+                        var filesArray = [file];
+
+                        if(navigator.canShare && navigator.canShare({ files: filesArray })) {
+                          console.log('can share');
+                          navigator.share({
+                            title: resultFileNameTitle,
+                            files: filesArray,
+                          });
+                        }
+                        else {
+                          console.log('cannot share');
+                          downloadLink.download = resultFileName;
+                          downloadLink.href = resultImage;
+                        }
+                    }
 
                     var image = new Image();
                     image.src = resultImage;
@@ -168,14 +186,6 @@
                     var loader = document.getElementById("spinner");
                     loader.style.display = "none";
 
-                    var file = new File([resultImage], resultFileName, {type: 'image/jpeg'});
-                    var filesArray = [file];
-
-                    if(navigator.canShare && navigator.canShare({ files: filesArray })) {
-                      navigator.share({
-                        files: filesArray,
-                      });
-                    }
                 };
 
                 sourceImage.src = srcImage;
@@ -187,6 +197,9 @@
         function handleImageUpload(event) {
             var loader = document.getElementById("spinner");
             loader.style.display = "block";
+
+            const resultDiv = document.getElementById("result-image");
+            resultDiv.innerHTML = "";
 
             const file = event.target.files[0];
             const fileName = file.name;
