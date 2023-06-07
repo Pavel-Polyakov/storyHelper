@@ -33,6 +33,7 @@
             <div class="col text-center">
                 <input type="file" id="image-input" hidden/>
                 <input class="btn btn-primary btn-lg" type="button" value="Select photo" id="image-input-button">
+                <input class="btn btn-secondary btn-lg" type="button" value="Share" id="share-button" disabled>
             </div>
         </div>
 
@@ -158,15 +159,14 @@
                     const resultFileName = resultFileNameTitle + ".jpg";
                     const resultImage = resultCanvas.toDataURL("image/jpeg");
                     downloadLink.href = "#";
-
                     downloadLink.onclick = function() {
                         resultCanvas.toBlob(
                             function(blob){
-                                var files = [new File([blob], resultFileName, {type: 'image/jpeg', lastModified:new Date().getTime()})];
-
+                                var files = [new File([blob], resultFileName, {type: 'image/jpeg'})];
                                 if(navigator.canShare && navigator.canShare({ files: files })) {
                                   console.log('can share');
                                   navigator.share({
+                                    title: resultFileNameTitle,
                                     files: files,
                                   });
                                 }
@@ -179,16 +179,19 @@
                         );
 
                     }
+                    var shareButton = document.getElementById("share-button");
+                    shareButton.addEventListener("click", function() {
+                        downloadLink.click();
+                    });
+                    shareButton.disabled = false;
 
                     var image = new Image();
                     image.src = resultImage;
-                    downloadLink.appendChild(image);
-                    resultDiv.appendChild(downloadLink);
+                    resultDiv.appendChild(image);
                     image.classList.add("img-fluid");
 
                     var loader = document.getElementById("spinner");
                     loader.style.display = "none";
-
                 };
 
                 sourceImage.src = srcImage;
@@ -200,6 +203,9 @@
         function handleImageUpload(event) {
             var loader = document.getElementById("spinner");
             loader.style.display = "block";
+
+            var shareButton = document.getElementById("share-button");
+            shareButton.disabled = true;
 
             const resultDiv = document.getElementById("result-image");
             resultDiv.innerHTML = "";
