@@ -162,7 +162,7 @@
                     downloadLink.onclick = function() {
                         resultCanvas.toBlob(
                             function(blob){
-                                var files = [new File([blob], resultFileName, {type: 'image/jpeg', lastModified:new Date().getTime()}})];
+                                var files = [new File([blob], resultFileName, {type: 'image/jpeg', lastModified:new Date().getTime()})];
                                 if(navigator.canShare && navigator.canShare({ files: files })) {
                                   console.log('can share');
                                   navigator.share({
