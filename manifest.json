@@ -1,0 +1,21 @@
+{
+    "name": "storyHelper",
+    "short_name": "storyHelper",
+    "start_url": ".",
+    "theme_color": "#a1c4fd",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "icons":[
+      {
+        "src":"images/logo_192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src":"images/logo_512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  
+  }
