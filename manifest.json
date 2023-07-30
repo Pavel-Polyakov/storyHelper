@@ -2,7 +2,7 @@
     "name": "storyHelper",
     "short_name": "storyHelper",
     "start_url": ".",
-    "theme_color": "#a1c4fd",
+    "theme_color": "#ffffff",
     "background_color": "#ffffff",
     "display": "standalone",
     "icons":[
