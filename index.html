@@ -185,12 +185,18 @@
                     resultCtx.stroke();
                     resultCtx.restore();
 
-                    // Draw the image inside a rounded rectangle
-                    resultCtx.save();
-                    roundRect(resultCtx, xPosition, yPosition, newWidth, newHeight, 20);
-                    resultCtx.clip();
-                    resultCtx.drawImage(sourceImage, xPosition, yPosition, newWidth, newHeight);
-                    resultCtx.restore();
+                    // Draw the image inside a rounded rectangle.
+                    // Clipping is applied on a separate offscreen canvas so that the
+                    // context-filter-polyfill cannot intercept drawImage and bypass the
+                    // clip path on resultCtx.
+                    const roundedCanvas = document.createElement("canvas");
+                    roundedCanvas.width = newWidth;
+                    roundedCanvas.height = newHeight;
+                    const roundedCtx = roundedCanvas.getContext("2d");
+                    roundRect(roundedCtx, 0, 0, newWidth, newHeight, 20);
+                    roundedCtx.clip();
+                    roundedCtx.drawImage(sourceImage, 0, 0, newWidth, newHeight);
+                    resultCtx.drawImage(roundedCanvas, xPosition, yPosition);
 
                     // Create a download link for the final image
                     const downloadLink = document.createElement("a");
