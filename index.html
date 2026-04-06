@@ -189,7 +189,7 @@
                     // Approach: fill the rounded-rect shape first (the mask), then use
                     // source-in compositing to paint the image only where the mask exists.
                     // This avoids clip() (unreliable on iOS Safari including iOS 26) and
-                    // avoids destination-in (produces a black artefact on iOS Safari because
+                    // avoids destination-in (produces a black artifact on iOS Safari because
                     // the browser uses the fill colour instead of the destination colour).
                     const roundedCanvas = document.createElement("canvas");
                     roundedCanvas.width = newWidth;
