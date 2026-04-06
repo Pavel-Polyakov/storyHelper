@@ -186,18 +186,19 @@
                     resultCtx.restore();
 
                     // Draw the image inside a rounded rectangle.
-                    // Use an offscreen canvas with destination-in compositing instead of
-                    // clip() because clip() is unreliable on iOS Safari (including iOS 26),
-                    // and context-filter-polyfill can intercept drawImage and bypass clip
-                    // on resultCtx anyway.
+                    // Approach: fill the rounded-rect shape first (the mask), then use
+                    // source-in compositing to paint the image only where the mask exists.
+                    // This avoids clip() (unreliable on iOS Safari including iOS 26) and
+                    // avoids destination-in (produces a black artifact on iOS Safari because
+                    // the browser uses the fill colour instead of the destination colour).
                     const roundedCanvas = document.createElement("canvas");
                     roundedCanvas.width = newWidth;
                     roundedCanvas.height = newHeight;
                     const roundedCtx = roundedCanvas.getContext("2d");
-                    roundedCtx.drawImage(sourceImage, 0, 0, newWidth, newHeight);
-                    roundedCtx.globalCompositeOperation = "destination-in";
                     roundRect(roundedCtx, 0, 0, newWidth, newHeight, 20);
                     roundedCtx.fill();
+                    roundedCtx.globalCompositeOperation = "source-in";
+                    roundedCtx.drawImage(sourceImage, 0, 0, newWidth, newHeight);
                     resultCtx.drawImage(roundedCanvas, xPosition, yPosition);
 
                     // Create a download link for the final image
